@@ -24,34 +24,46 @@ export const Form = () => {
   const [error, setError] = useState("");
   const [hints, setHints] = useState("");
   const [isSucces, setIsSucces] = useState("");
+  const [reason, setReason] = useState("");
   function validate(email) {
     setError("");
     setIsSucces("");
     setHints([]);
     if (email) {
-      axios({
-        method: "GET",
-        url: "https://mailcheck.p.rapidapi.com/",
-        params: { domain: email },
-        headers: {
-          "x-rapidapi-host": "mailcheck.p.rapidapi.com",
-          "x-rapidapi-key":
-            "a7fa2e61a4msh2ff7545987bdf5dp12e4a4jsnf9f5d4a8a22e",
-        },
-      })
+      // axios({
+      //   method: "GET",
+      //   url: "https://mailcheck.p.rapidapi.com/",
+      //   params: { domain: email },
+      //   headers: {
+      //     "x-rapidapi-host": "mailcheck.p.rapidapi.com",
+      //     "x-rapidapi-key":
+      //       "a7fa2e61a4msh2ff7545987bdf5dp12e4a4jsnf9f5d4a8a22e",
+      //   },
+      // })
+      //   .then((response) => {
+      //     return response.data;
+      //   })
+      //   .then((result) => {
+      //     console.log(result);
+      //     if (!result.valid) {
+      //       setError(result.text);
+      //     } else {
+      //       setError("");
+      //       setIsSucces("Succes");
+      //     }
+      //   });
+      axios
+        .get(
+          `https://api.kickbox.com/v2/verify?email=${email}&apikey=live_b27fd43e5a4cacd838f8af7332adefb185828d6be7fad13dc3de3e8fda799a33`
+        )
         .then((response) => {
+          console.log(response);
           return response.data;
         })
-        .then((result) => {
-          console.log(result);
-          if (!result.valid) {
-            setError(result.text);
-          } else {
-            setError("");
-            setIsSucces("Succes");
-          }
+        .then((data) => {
+          setError(data.result);
+          setReason(data.reason);
         });
-
       getHints(email);
     }
   }
@@ -98,7 +110,9 @@ export const Form = () => {
       </div>
       <div className="fs-5 text-center mt-2">
         {error ? (
-          <div className="text-danger">{error}</div>
+          <div className="text-white">
+            {error} ({reason})
+          </div>
         ) : (
           <div className="text-success">{isSucces}</div>
         )}
